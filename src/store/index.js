@@ -18,7 +18,9 @@ const mutations = {
 
 // initial state
 const state = {
-  server_url: null
+  server_url: null,
+  connectors: [],
+  topics: []
 }
 // getters
 const getters = {
