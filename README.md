@@ -6,6 +6,8 @@ I was getting tired of running curl commands from a CLI for Kafka Connect config
 - Return Server Status
 - Allow Pause/Resume of individual Tasks
 - See if there is a way to view topic information
+- Display connector capabilities
+
 ## Project setup
 ```
 npm install
