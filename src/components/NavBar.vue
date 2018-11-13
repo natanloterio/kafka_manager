@@ -5,6 +5,7 @@
 
         <b-collapse is-nav id="nav_collapse">
             <!-- Right aligned nav items -->
+            Server: {{current_server}} <font-awesome-icon :icon="connection_status_icon" />
             <b-navbar-nav class="ml-auto">
                 <b-navbar-nav>
                     <b-nav-item to="/">Home</b-nav-item>
@@ -18,7 +19,31 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
+import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import check_server from '../modules/check_server_connection'
+
 export default {
-  name: 'NavBar'
+    name: 'NavBar',
+    computed: {
+        current_server(){
+            return this.$store.getters.getServer;
+        },
+        connection_status_icon(){
+            if(this.current_server === null) {
+                return;
+
+            }
+
+            if(check_server()) {
+                return faCheck
+
+            } else {
+                return ''
+
+            }
+            
+        }
+    }
 }
 </script>

@@ -9,7 +9,10 @@ const mutations = {
   [types.add_server] (state, { url }) {
       state.server_url = url.url;
 
-      console.log(state);
+  },
+  [types.remove_server] (state, { url }) {
+      state.server_url = null;
+
   }
 };
 
@@ -27,9 +30,15 @@ const actions = {
   add_server({ commit }, server_url) {
     commit(types.add_server, {
       url: server_url
-    });
+    })
+  },
+  remove_server({ commit }, server_url) {
+    commit(types.remove_server, {
+      url: server_url
+    })
   }
-};
+}
+
 
 // one store for entire application
 export default new Vuex.Store({
