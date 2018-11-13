@@ -42,6 +42,12 @@
                 <b-button type="submit" variant="primary">Add Connector</b-button>
                 <b-button type="reset" variant="danger">Reset</b-button>
                 </b-form>
+            </div>
+        </b-row>
+
+        <b-row>
+            <h4 class="mt-5">API Response</h4>
+            <div class="col-sm-12">
                 <div class="card bg-faded">
                     <div class="card-block">
                         {{api_response}}
@@ -89,6 +95,8 @@ export default {
         let u = this.$store.getters.getServer + "/connectors";
         let r = await axios.get(u);
 
+        this.api_response = r;
+
         r.data.forEach((v, i) => {
             this.connectors.push({
                 "id": i,
@@ -101,13 +109,27 @@ export default {
 
     },
     async deleteConnector(item, index, target) {
-        console.log(item);
+        let self = this;
+
+        this.api_response = "";
+
+        let u = this.$store.getters.getServer + "/connectors/" + item.name;
+
+        try {
+            let r = await axios.delete(u,this.form.connector_config);
+
+            self.api_response = r;
+
+        } catch (err) {
+            self.api_response = err;
+        
+        }
+
+        self.loadConnectors();
     
     },
     async addConnector (evt) {
         let self = this;
-
-        console.log(this.form.connector_config);
 
         this.api_response = "";
 
@@ -127,7 +149,7 @@ export default {
         
         }
 
-        console.log(this.api_response);
+        this.loadConnectors();
 
     },
     onResetConnector (evt) {
