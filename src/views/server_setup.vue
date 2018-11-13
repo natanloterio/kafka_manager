@@ -1,11 +1,13 @@
 <template>
-  <div class="about">
-  <div class="container">
+  <div class="server_setup">
+    <b-container>
+        <h1 class="mt-5">Server Setup</h1>
+        <p class="lead">Adding your server url here will cause it to persist across this app for this session only</p>
     <b-form @submit="onSubmit" @reset="onReset" v-if="show">
       <b-form-group id="connect_url" 
                     label="Kafka Connect URL:"
                     label-for="exampleInput1"
-                    description="This is the URL that points to a Kafka Connect Instance">
+                    description="This is the URL that points to a Kafka Connect Instance.. by default it will be http://hostname:8083">
         <b-form-input id="exampleInput1"
                       type="text"
                       v-model="form.url"
@@ -16,7 +18,9 @@
       <b-button type="submit" variant="primary">Connect</b-button>
       <b-button type="reset" variant="danger">Reset and Clear Server</b-button>
     </b-form>
-  </div>
+
+    </b-container>
+
   </div>
 </template>
 

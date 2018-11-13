@@ -5,11 +5,12 @@
 
         <b-collapse is-nav id="nav_collapse">
             <!-- Right aligned nav items -->
-            Server: {{current_server}} <font-awesome-icon :icon="connection_status_icon" />
+            Server: {{current_server}}
             <b-navbar-nav class="ml-auto">
                 <b-navbar-nav>
                     <b-nav-item to="/">Home</b-nav-item>
                     <b-nav-item to="/server_setup">Server Setup</b-nav-item>
+                    <b-nav-item to="/connectors">Connectors</b-nav-item>
                 </b-navbar-nav>
             </b-navbar-nav>
 
@@ -35,13 +36,6 @@ export default {
 
             }
 
-            if(check_server()) {
-                return faCheck
-
-            } else {
-                return ''
-
-            }
             
         }
     }
