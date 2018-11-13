@@ -7,7 +7,7 @@
       <b-form-group id="connect_url" 
                     label="Kafka Connect URL:"
                     label-for="exampleInput1"
-                    description="This is the URL that points to a Kafka Connect Instance.. by default it will be http://hostname:8083">
+                    description="This is the URL that points to a Kafka Connect Instance.. by default it will be http://hostname:8083 tip - do not use a trailing slash">
         <b-form-input id="exampleInput1"
                       type="text"
                       v-model="form.url"

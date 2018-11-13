@@ -14,8 +14,8 @@
                 <b-table striped hover :items="connectors" :fields="fields">
                     <template slot="actions" slot-scope="row">
                         <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-                        <b-button size="sm" @click.stop="info(row.item, row.index, $event.target)" class="mr-1">
-                        Delete
+                        <b-button size="sm" @click.stop="deleteConnector(row.item, row.index, $event.target)" class="mr-1">
+                            Delete
                         </b-button>
                     </template>
                 </b-table>
@@ -25,15 +25,34 @@
         <b-row>
             <h4 class="mt-5">Upload new Connector Config</h4>
             <div class="col-sm-12">
-                sf
+                <b-form @submit="addConnector" @reset="onResetConnector" v-if="show">
+                <b-form-group id="exampleInputGroup1"
+                                label="JSON Connector Config:"
+                                label-for="exampleInput1"
+                                description="sdf">
+                    <b-form-textarea id="exampleInput1"
+                                type="text"
+                                v-model="form.connector_config"
+                                required
+                                :rows="3"
+
+                                placeholder="Enter config here">
+                    </b-form-textarea>
+                </b-form-group>
+                <b-button type="submit" variant="primary">Add Connector</b-button>
+                <b-button type="reset" variant="danger">Reset</b-button>
+                </b-form>
+                <div class="card bg-faded">
+                    <div class="card-block">
+                        {{api_response}}
+                    </div>
+                </div>
             </div>
         </b-row>
 
     </b-container>
   </div>
 </template>
-
-
 
 <script>
 const axios = require('axios');
@@ -55,14 +74,20 @@ export default {
             "key": "actions",
             "label": "Actions"
         }],
-        connectors: []
+        form: {
+            connector_config: ""
+        },
+        connectors: [],
+        show: true,
+        api_response: "Response will go here"
     }
   },
   methods: {
     async loadConnectors() {
         this.connectors = [];
 
-        let r = await axios.get('http://mihl-web03.report.dmz:8083/connectors');
+        let u = this.$store.getters.getServer + "/connectors";
+        let r = await axios.get(u);
 
         r.data.forEach((v, i) => {
             this.connectors.push({
@@ -74,8 +99,48 @@ export default {
 
         });
 
-    }
+    },
+    async deleteConnector(item, index, target) {
+        console.log(item);
+    
+    },
+    async addConnector (evt) {
+        let self = this;
 
+        console.log(this.form.connector_config);
+
+        this.api_response = "";
+
+        let u = this.$store.getters.getServer + "/connectors";
+
+        try {
+            let r = await axios.post(u,this.form.connector_config, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+
+            self.api_response = r;
+
+        } catch (err) {
+            self.api_response = err;
+        
+        }
+
+        console.log(this.api_response);
+
+    },
+    onResetConnector (evt) {
+      evt.preventDefault();
+      /* Reset our form values */
+      this.form.connector_config = '';
+        this.api_response = "";
+
+      /* Trick to reset/clear native browser form validation state */
+      this.show = false;
+      this.$nextTick(() => { this.show = true });
+
+    }
   }
 }
 </script>
