@@ -92,6 +92,8 @@ export default {
     async loadConnectors() {
         this.connectors = [];
 
+        this.api_response = "";
+        
         let u = this.$store.getters.getServer + "/connectors";
         let r = await axios.get(u);
 
