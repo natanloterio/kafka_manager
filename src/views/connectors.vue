@@ -61,110 +61,101 @@
 </template>
 
 <script>
-const axios = require('axios');
 import { mapGetters, mapActions } from 'vuex'
+const axios = require('axios')
 
 export default {
-  data () {
-    return {
-        fields: [{
-            "key": 'id',
-            "label": 'ID',
-            "sortable": true
-        }, {
-            "key": "name",
-            "label": "Connector Name",
-            "sortable": true
-            
-        }, {
-            "key": "actions",
-            "label": "Actions"
-        }],
-        form: {
-            connector_config: ""
+    data () {
+        return {
+            fields: [{
+                'key': 'id',
+                'label': 'ID',
+                'sortable': true
+            }, {
+                'key': 'name',
+                'label': 'Connector Name',
+                'sortable': true
+
+            }, {
+                'key': 'actions',
+                'label': 'Actions'
+            }],
+            form: {
+                connector_config: ''
+            },
+            connectors: [],
+            show: true,
+            api_response: 'Response will go here'
+        }
+    },
+    methods: {
+        async loadConnectors () {
+            this.connectors = []
+
+            this.api_response = ''
+
+            let u = this.$store.getters.getConnectorServer + '/connectors'
+            let r = await axios.get(u)
+
+            this.api_response = r
+
+            r.data.forEach((v, i) => {
+                this.connectors.push({
+                    'id': i,
+                    'sortable': true,
+                    'name': v
+
+                })
+            })
         },
-        connectors: [],
-        show: true,
-        api_response: "Response will go here"
-    }
-  },
-  methods: {
-    async loadConnectors() {
-        this.connectors = [];
+        async deleteConnector (item, index, target) {
+            let self = this
 
-        this.api_response = "";
-        
-        let u = this.$store.getters.getServer + "/connectors";
-        let r = await axios.get(u);
+            this.api_response = ''
 
-        this.api_response = r;
+            let u = this.$store.getters.getConnectorServer + '/connectors/' + item.name
 
-        r.data.forEach((v, i) => {
-            this.connectors.push({
-                "id": i,
-                "sortable": true,
-                "name": v
+            try {
+                let r = await axios.delete(u, this.form.connector_config)
 
-            });
+                self.api_response = r
+            } catch (err) {
+                self.api_response = err
+            }
 
-        });
+            self.loadConnectors()
+        },
+        async addConnector (evt) {
+            let self = this
 
-    },
-    async deleteConnector(item, index, target) {
-        let self = this;
+            this.api_response = ''
 
-        this.api_response = "";
+            let u = this.$store.getters.getConnectorServer + '/connectors'
 
-        let u = this.$store.getters.getServer + "/connectors/" + item.name;
+            try {
+                let r = await axios.post(u, this.form.connector_config, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
 
-        try {
-            let r = await axios.delete(u,this.form.connector_config);
+                self.api_response = r
+            } catch (err) {
+                self.api_response = err
+            }
 
-            self.api_response = r;
+            this.loadConnectors()
+        },
+        onResetConnector (evt) {
+            evt.preventDefault()
+            /* Reset our form values */
+            this.form.connector_config = ''
+            this.api_response = ''
 
-        } catch (err) {
-            self.api_response = err;
-        
+            /* Trick to reset/clear native browser form validation state */
+            this.show = false
+            this.$nextTick(() => { this.show = true })
         }
-
-        self.loadConnectors();
-    
-    },
-    async addConnector (evt) {
-        let self = this;
-
-        this.api_response = "";
-
-        let u = this.$store.getters.getServer + "/connectors";
-
-        try {
-            let r = await axios.post(u,this.form.connector_config, {
-                headers: {
-                    "Content-Type": "application/json"
-                }
-            });
-
-            self.api_response = r;
-
-        } catch (err) {
-            self.api_response = err;
-        
-        }
-
-        this.loadConnectors();
-
-    },
-    onResetConnector (evt) {
-      evt.preventDefault();
-      /* Reset our form values */
-      this.form.connector_config = '';
-        this.api_response = "";
-
-      /* Trick to reset/clear native browser form validation state */
-      this.show = false;
-      this.$nextTick(() => { this.show = true });
-
     }
-  }
 }
 </script>
