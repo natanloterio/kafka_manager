@@ -61,7 +61,6 @@
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
 const axios = require('axios')
 
 export default {
