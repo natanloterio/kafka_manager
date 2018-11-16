@@ -39,7 +39,9 @@ export default {
     data () {
         return {
             form: {
-                url: ''
+                kafka_url: '',
+                connect_url: ''
+
             },
             show: true
         }
@@ -50,6 +52,8 @@ export default {
             evt.preventDefault()
 
             if(this.form.connect_url !== '') {
+                this.form.connect_url = this.form.connect_url.replace(/\/+$/, '')
+
                 this.$store.dispatch('add_server', {
                     url: this.form.connect_url,
                     type: 'connect'
@@ -58,6 +62,8 @@ export default {
             }
 
             if(this.form.kafka_url !== '') {
+                this.form.kafka_url = this.form.kafka_url.replace(/\/+$/, '')
+
                 this.$store.dispatch('add_server', {
                     url: this.form.kafka_url,
                     type: 'kafka'
