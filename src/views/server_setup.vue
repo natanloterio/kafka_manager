@@ -84,6 +84,10 @@ export default {
             this.show = false
             this.$nextTick(() => { this.show = true })
         }
+    },
+    mounted () {
+        this.form.connect_url = this.$store.getters.getConnectorServer
+        this.form.kafka_url = this.$store.getters.getKafkaServer
     }
 }
 </script>
