@@ -1,9 +1,15 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import * as types from './mutation-types'
+import VuexPersistence from 'vuex-persist'
 
 Vue.use(Vuex)
 const debug = process.env.NODE_ENV !== 'production'
+
+const vuexLocal = new VuexPersistence({
+    storage: window.localStorage
+})
+
 // mutations
 const mutations = {
     [types.add_server] (state, { url, type = 'connect' }) {
@@ -55,5 +61,6 @@ export default new Vuex.Store({
     strict: debug,
     getters,
     actions,
-    mutations
+    mutations,
+    plugins: [vuexLocal.plugin]
 })
