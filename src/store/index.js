@@ -1,14 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import * as types from './mutation-types'
-import VuexPersistence from 'vuex-persist'
 
 Vue.use(Vuex)
-const debug = process.env.NODE_ENV !== 'production'
-
-const vuexLocal = new VuexPersistence({
-    storage: window.localStorage
-})
+const connectServer = process.env.CONNECT_SERVER || 'http://localhost:8083'
+const restServer = process.env.REST_SERVER || 'http://localhost:8084'
 
 // mutations
 const mutations = {
@@ -55,12 +51,14 @@ const actions = {
     }
 }
 
+// init with server environment variables
+state.servers.connectors_api = connectServer
+state.servers.kafka_api = restServer
+
 // one store for entire application
 export default new Vuex.Store({
     state,
-    strict: debug,
     getters,
     actions,
-    mutations,
-    plugins: [vuexLocal.plugin]
+    mutations
 })
