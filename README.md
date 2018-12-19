@@ -34,3 +34,13 @@ npm run test
 ```
 npm run lint
 ```
+
+### Docker build
+```
+npm run build-docker
+```
+
+### Run Docker
+```
+docker run -it -d -e PORT=9500 -p 9500:9500 kafka_manager:latest node server.js
+```
