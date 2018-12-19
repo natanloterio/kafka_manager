@@ -4,13 +4,18 @@
         <h1 class="mt-5">Connectors</h1>
         <p class="lead">View and Edit your connectors here</p>
 
-        <b-row>
+        <div v-if="server_connected == false">
+            <b-alert show variant="danger">
+                We're having issues connecting to your Kafka Connect Server, please check your Environment Variables<br>
+            </b-alert>
+        </div>
+
+        <b-row v-if="server_connected">
             <h4 class="mt-5">View and Delete Connectors</h4>
             <div class="col-sm-12">
                 <b-button size="md" variant="primary" @click='loadConnectors()'>
                     Refresh Connectors
                 </b-button>
-
                 <b-table striped hover :items="connectors" :fields="fields">
                     <template slot="actions" slot-scope="row">
                         <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
@@ -22,7 +27,7 @@
             </div>
         </b-row>
 
-        <b-row>
+        <b-row v-if="server_connected">
             <h4 class="mt-5">Upload new Connector Config</h4>
             <div class="col-sm-12">
                 <b-form @submit="addConnector" @reset="onResetConnector" v-if="show">
@@ -45,7 +50,7 @@
             </div>
         </b-row>
 
-        <b-row>
+        <b-row v-if="server_connected">
             <h4 class="mt-5">API Response</h4>
             <div class="col-sm-12">
                 <div class="card bg-faded">
@@ -61,6 +66,8 @@
 </template>
 
 <script>
+import Servers from '../modules/check_server_connection'
+
 const axios = require('axios')
 
 export default {
@@ -84,6 +91,7 @@ export default {
             },
             connectors: [],
             show: true,
+            server_connected: false,
             api_response: 'Response will go here'
         }
     },
@@ -155,6 +163,22 @@ export default {
             this.show = false
             this.$nextTick(() => { this.show = true })
         }
+    },
+    async beforeMount () {
+        console.log('yo')
+
+        let c = this.$store.getters.getConnectorServer
+        let r = this.$store.getters.getKafkaServer
+
+        let s = new Servers(c, r)
+
+        if(await s.checkConnectServer()) {
+            this.server_connected = true
+
+            return true
+        }
+
+        this.server_connected = false
     }
 }
 </script>

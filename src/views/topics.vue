@@ -37,7 +37,11 @@
         <h1 class="mt-5">Topics</h1>
         <p class="lead">View and Edit your Topics here</p>
 
-        <b-row>
+        <div v-if="server_connected == false">
+            <b-alert show variant="danger">We're having issues connecting to your Kafka Rest Server, please check your Environment Variables</b-alert>
+        </div>
+
+        <b-row v-if="server_connected">
             <h4 class="mt-5">Topics</h4>
             <div class="col-sm-12">
                 <b-button size="md" variant="primary" @click='loadTopics()'>
@@ -59,7 +63,7 @@
             </div>
         </b-row>
 
-        <b-row>
+        <b-row v-if="server_connected">
             <h4 class="mt-5">API Response</h4>
             <div class="col-sm-12">
                 <div class="card bg-faded">
@@ -103,6 +107,7 @@
 </template>
 
 <script>
+import Servers from '../modules/check_server_connection'
 import VueJsonPretty from 'vue-json-pretty'
 const axios = require('axios')
 
@@ -130,6 +135,7 @@ export default {
             },
             topics: [],
             show: true,
+            server_connected: false,
             api_response: 'Response will go here',
             modal: {
                 title: '',
@@ -191,6 +197,20 @@ export default {
             } catch (err) {
             }
         }
+    },
+    async beforeMount () {
+        let c = this.$store.getters.getConnectorServer
+        let r = this.$store.getters.getKafkaServer
+
+        let s = new Servers(c, r)
+
+        if(await s.checkRestServer()) {
+            this.server_connected = true
+
+            return true
+        }
+
+        this.server_connected = false
     }
 }
 </script>
