@@ -7,20 +7,16 @@
             <b-navbar-nav class="ml-auto">
                 <b-navbar-nav>
                     <b-nav-item to="/">Home</b-nav-item>
-                    <b-nav-item to="/server_setup">Server Setup</b-nav-item>
                     <b-nav-item to="/topics">Topics</b-nav-item>
                     <b-nav-item to="/connectors">Connectors</b-nav-item>
                 </b-navbar-nav>
             </b-navbar-nav>
-
         </b-collapse>
     </b-navbar>
 
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-
 export default {
     name: 'NavBar',
     computed: {
