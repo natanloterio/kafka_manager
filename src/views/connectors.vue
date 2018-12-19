@@ -1,8 +1,7 @@
 <template>
   <div class="connectors">
     <b-container>
-        <h1 class="mt-5">Connectors</h1>
-        <p class="lead">View and Edit your connectors here</p>
+        <h1 class="mt-5">Connectors and Sinks</h1>
 
         <div v-if="server_connected == false">
             <b-alert show variant="danger">
@@ -11,53 +10,53 @@
         </div>
 
         <b-row v-if="server_connected">
-            <h4 class="mt-5">View and Delete Connectors</h4>
-            <div class="col-sm-12">
-                <b-button size="md" variant="primary" @click='loadConnectors()'>
-                    Refresh Connectors
-                </b-button>
-                <b-table striped hover :items="connectors" :fields="fields">
-                    <template slot="actions" slot-scope="row">
-                        <!-- We use @click.stop here to prevent a 'row-clicked' event from also happening -->
-                        <b-button size="sm" @click.stop="deleteConnector(row.item, row.index, $event.target)" class="mr-1">
-                            Delete
-                        </b-button>
-                    </template>
-                </b-table>
-            </div>
+            <b-container>
+                <b-row>
+                    <b-col>
+                        <strong>Connectors</strong>
+                            <b-list-group >
+                                <b-list-group-item button v-for="c in connectors" v-bind:key=c.id>
+                                    {{c.name}}
+                                    <b-button size="sm" @click.stop="deleteConnector(c.name)" class="mr-1 float-right">
+                                        Delete
+                                    </b-button>
+                                </b-list-group-item>
+                            </b-list-group>
+                    </b-col>
+                    <b-col v-if="sinks.length > 0">
+                        <strong>Sinks</strong>
+                            <b-list-group >
+                                <b-list-group-item button v-for="s in sinks" v-bind:key=s.id>
+                                    {{s.name}}
+                                    <b-button size="sm" @click.stop="deleteConnector(s.name)" class="mr-1 float-right">
+                                        Delete
+                                    </b-button>
+                                </b-list-group-item>
+                            </b-list-group>
+                    </b-col>
+                </b-row>
+            </b-container>
         </b-row>
-
+        <br>
         <b-row v-if="server_connected">
-            <h4 class="mt-5">Upload new Connector Config</h4>
             <div class="col-sm-12">
                 <b-form @submit="addConnector" @reset="onResetConnector" v-if="show">
-                <b-form-group id="exampleInputGroup1"
-                                label="JSON Connector Config:"
-                                label-for="exampleInput1"
-                                description="sdf">
-                    <b-form-textarea id="exampleInput1"
-                                type="text"
-                                v-model="form.connector_config"
-                                required
-                                :rows="3"
-
-                                placeholder="Enter config here">
-                    </b-form-textarea>
-                </b-form-group>
-                <b-button type="submit" variant="primary">Add Connector</b-button>
-                <b-button type="reset" variant="danger">Reset</b-button>
+                    <b-form-group id="exampleInputGroup1"
+                                    label-for="exampleInput1"
+                                    description="Upload a JSON configuration script here">
+                        <b-form-textarea id="exampleInput1"
+                                    type="text"
+                                    v-model="form.connector_config"
+                                    required
+                                    :rows="3"
+                                    placeholder="Enter config here">
+                        </b-form-textarea>
+                    </b-form-group>
+                    <b-button-group>
+                        <b-button type="submit" variant="primary">Add Connector</b-button>
+                        <b-button type="reset" variant="danger">Clear</b-button>
+                    </b-button-group>
                 </b-form>
-            </div>
-        </b-row>
-
-        <b-row v-if="server_connected">
-            <h4 class="mt-5">API Response</h4>
-            <div class="col-sm-12">
-                <div class="card bg-faded">
-                    <div class="card-block">
-                        {{api_response}}
-                    </div>
-                </div>
             </div>
         </b-row>
 
@@ -73,23 +72,11 @@ const axios = require('axios')
 export default {
     data () {
         return {
-            fields: [{
-                'key': 'id',
-                'label': 'ID',
-                'sortable': true
-            }, {
-                'key': 'name',
-                'label': 'Connector Name',
-                'sortable': true
-
-            }, {
-                'key': 'actions',
-                'label': 'Actions'
-            }],
             form: {
                 connector_config: ''
             },
             connectors: [],
+            sinks: [],
             show: true,
             server_connected: false,
             api_response: 'Response will go here'
@@ -106,24 +93,37 @@ export default {
 
             this.api_response = r
 
+            r.data.sort((a, b) => {
+                if(a < b) { return -1 }
+                if(a > b) { return 1 }
+                return 0
+            })
+
             r.data.forEach((v, i) => {
-                this.connectors.push({
+                let c = {
                     'id': i,
                     'sortable': true,
                     'name': v
 
-                })
+                }
+
+                // determine if connector or sink based off name
+                if(v.indexOf('sink') > -1) {
+                    this.sinks.push(c)
+                } else {
+                    this.connectors.push(c)
+                }
             })
         },
-        async deleteConnector (item, index, target) {
+        async deleteConnector (name) {
             let self = this
 
             this.api_response = ''
 
-            let u = this.$store.getters.getConnectorServer + '/connectors/' + item.name
+            let u = this.$store.getters.getConnectorServer + '/connectors/' + name
 
             try {
-                let r = await axios.delete(u, this.form.connector_config)
+                let r = await axios.delete(u)
 
                 self.api_response = r
             } catch (err) {
@@ -164,9 +164,7 @@ export default {
             this.$nextTick(() => { this.show = true })
         }
     },
-    async beforeMount () {
-        console.log('yo')
-
+    async created () {
         let c = this.$store.getters.getConnectorServer
         let r = this.$store.getters.getKafkaServer
 
@@ -175,6 +173,7 @@ export default {
         if(await s.checkConnectServer()) {
             this.server_connected = true
 
+            this.loadConnectors()
             return true
         }
 
