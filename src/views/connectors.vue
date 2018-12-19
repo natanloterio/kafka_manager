@@ -72,11 +72,16 @@
     </b-container>
     <b-modal ref="connector_info_modal" hide-footer :title=modal.title size="lg">
       <div class="d-block">
+        <h5>Configuration</h5>
         <vue-json-pretty
             :data=modal.config
         >
         </vue-json-pretty>
-
+        <h5>Status</h5>
+        <vue-json-pretty
+            :data=modal.status
+        >
+        </vue-json-pretty>
       </div>
     </b-modal>
   </div>
@@ -104,7 +109,8 @@ export default {
             api_response: 'Response will go here',
             modal: {
                 title: '',
-                config: []
+                config: [],
+                status: []
 
             }
         }
@@ -184,12 +190,15 @@ export default {
             let self = this
 
             let u = this.$store.getters.getConnectorServer + '/connectors/' + name + '/config'
+            let su = this.$store.getters.getConnectorServer + '/connectors/' + name + '/status'
 
             try {
                 let r = await axios.get(u)
+                let s = await axios.get(su)
 
                 self.modal.title = name
                 self.modal.config = r.data
+                self.modal.status = s.data
 
                 self.$refs.connector_info_modal.show()
             } catch (err) {
