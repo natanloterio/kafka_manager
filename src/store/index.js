@@ -3,8 +3,20 @@ import Vuex from 'vuex'
 import * as types from './mutation-types'
 
 Vue.use(Vuex)
-const connectServer = process.env.CONNECT_SERVER || 'http://localhost:8083'
-const restServer = process.env.REST_SERVER || 'http://localhost:8084'
+
+let connectServer = 'http://localhost:8083'
+let restServer = 'http://localhost:8084'
+
+if(process.env.NODE_ENV === 'production') {
+    connectServer = process.env.VUE_APP_CONNECT_SERVER
+    restServer = process.env.REST_SERVER
+}
+
+// fix urls with trailing slashes
+if(typeof connectServer !== 'undefined') { connectServer = connectServer.replace(/\/+$/, '') }
+if(typeof restServer !== 'undefined') { restServer = restServer.replace(/\/+$/, '') }
+
+const debug = process.env.NODE_ENV !== 'production'
 
 // mutations
 const mutations = {
@@ -58,6 +70,7 @@ state.servers.kafka_api = restServer
 // one store for entire application
 export default new Vuex.Store({
     state,
+    strict: debug,
     getters,
     actions,
     mutations

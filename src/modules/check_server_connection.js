@@ -1,11 +1,13 @@
-const axios = require('axios')
-class Servers {
+import axios from 'axios'
+
+export class Servers {
     constructor (connectServer = null, restServer = null) {
         this.connect_server = connectServer
         this.rest_server = restServer
     }
 
     async checkRestServer () {
+        console.log('connecting to rest api...')
         try {
             let u = this.rest_server
             let r = await axios.get(u)
@@ -14,30 +16,34 @@ class Servers {
                 return false
             }
 
-            console.debug(`rest server connected: ${this.rest_server}`)
+            console.log(`rest server connected: ${this.rest_server}`)
 
             return true
-        } catch {
+        } catch (err) {
+            console.log(err)
             return false
         }
     }
 
     async checkConnectServer () {
+        console.log('connecting to connect api...')
         try {
             let u = this.connect_server
+
+            console.log('url for connect:', u)
+
             let r = await axios.get(u)
 
             if(r.status !== 200) {
                 return false
             }
 
-            console.debug(`connect server connected: ${this.connect_server}`)
+            console.log(`connect server connected: ${this.connect_server}`)
 
             return true
-        } catch {
+        } catch (err) {
+            console.log(err)
             return false
         }
     }
 }
-
-export default Servers

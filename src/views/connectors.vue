@@ -88,10 +88,9 @@
 </template>
 
 <script>
-import Servers from '../modules/check_server_connection'
 import VueJsonPretty from 'vue-json-pretty'
-
-const axios = require('axios')
+import { Servers } from '../modules/check_server_connection'
+import axios from 'axios'
 
 export default {
     components: {
@@ -215,7 +214,7 @@ export default {
             this.$nextTick(() => { this.show = true })
         }
     },
-    async created () {
+    created: async function () {
         let c = this.$store.getters.getConnectorServer
         let r = this.$store.getters.getKafkaServer
 
