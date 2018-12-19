@@ -17,9 +17,14 @@
                             <b-list-group >
                                 <b-list-group-item button v-for="c in connectors" v-bind:key=c.id>
                                     {{c.name}}
-                                    <b-button size="sm" @click.stop="deleteConnector(c.name)" class="mr-1 float-right">
-                                        Delete
-                                    </b-button>
+                                    <b-button-group class="float-right">
+                                        <b-button type="reset" @click.stop="viewConnector(c.name)">Info</b-button>
+                                        <b-button size="sm" variant="danger" @click.stop="deleteConnector(c.name)" class="mr-1">
+                                            Delete
+                                        </b-button>
+
+                                    </b-button-group>
+
                                 </b-list-group-item>
                             </b-list-group>
                     </b-col>
@@ -28,9 +33,13 @@
                             <b-list-group >
                                 <b-list-group-item button v-for="s in sinks" v-bind:key=s.id>
                                     {{s.name}}
-                                    <b-button size="sm" @click.stop="deleteConnector(s.name)" class="mr-1 float-right">
-                                        Delete
-                                    </b-button>
+                                    <b-button-group class="float-right">
+                                        <b-button type="reset" @click.stop="viewConnector(s.name)">Info</b-button>
+                                        <b-button size="sm" variant="danger" @click.stop="deleteConnector(c.name)" class="mr-1">
+                                            Delete
+                                        </b-button>
+
+                                    </b-button-group>
                                 </b-list-group-item>
                             </b-list-group>
                     </b-col>
@@ -61,15 +70,28 @@
         </b-row>
 
     </b-container>
+    <b-modal ref="connector_info_modal" hide-footer :title=modal.title size="lg">
+      <div class="d-block">
+        <vue-json-pretty
+            :data=modal.config
+        >
+        </vue-json-pretty>
+
+      </div>
+    </b-modal>
   </div>
 </template>
 
 <script>
 import Servers from '../modules/check_server_connection'
+import VueJsonPretty from 'vue-json-pretty'
 
 const axios = require('axios')
 
 export default {
+    components: {
+        VueJsonPretty
+    },
     data () {
         return {
             form: {
@@ -79,7 +101,12 @@ export default {
             sinks: [],
             show: true,
             server_connected: false,
-            api_response: 'Response will go here'
+            api_response: 'Response will go here',
+            modal: {
+                title: '',
+                config: []
+
+            }
         }
     },
     methods: {
@@ -152,6 +179,21 @@ export default {
             }
 
             this.loadConnectors()
+        },
+        async viewConnector (name) {
+            let self = this
+
+            let u = this.$store.getters.getConnectorServer + '/connectors/' + name + '/config'
+
+            try {
+                let r = await axios.get(u)
+
+                self.modal.title = name
+                self.modal.config = r.data
+
+                self.$refs.connector_info_modal.show()
+            } catch (err) {
+            }
         },
         onResetConnector (evt) {
             evt.preventDefault()
