@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
+    "serve-production": "vue-cli-service serve --mode=production",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "build-docker": "vue-cli-service build && docker build . -t kafka_manager",
-    "run-docker": "docker run -it -d -e PORT=9500 -p 9500:9500 kafka_manager:latest node server.js"
+    "run-docker": "docker run -it -d -e PORT=9500 -p 9500:9500 kafka_manager node server.js"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.4.0",
@@ -24,6 +25,7 @@
     "vuex-persist": "^2.0.0"
   },
   "devDependencies": {
+    "@babel/plugin-transform-async-to-generator": "^7.2.0",
     "@vue/cli-plugin-babel": "^3.0.4",
     "@vue/cli-plugin-eslint": "^3.0.4",
     "@vue/cli-plugin-pwa": "^3.0.4",
