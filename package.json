@@ -7,7 +7,7 @@
     "serve-production": "vue-cli-service serve --mode=production",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "build-docker": "vue-cli-service build && docker build . -t jeffbeagley/kafka_manager",
+    "build-docker": "docker build . -t jeffbeagley/kafka_manager",
     "run-docker": "docker run -it -d -e PORT=9500 -p 9500:9500 kafka_manager"
   },
   "dependencies": {

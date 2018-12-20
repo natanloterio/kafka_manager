@@ -9,7 +9,7 @@ let restServer = 'http://localhost:8084'
 
 if(process.env.NODE_ENV === 'production') {
     connectServer = process.env.VUE_APP_CONNECT_SERVER
-    restServer = process.env.REST_SERVER
+    restServer = process.env.VUE_APP_REST_SERVER
 }
 
 // fix urls with trailing slashes
