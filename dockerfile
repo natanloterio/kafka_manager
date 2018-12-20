@@ -14,3 +14,4 @@ EXPOSE 8080
 ADD dist /var/build/dist
 ADD ./server.js /var/build/server.js
 
+CMD ["node", "server.js"]

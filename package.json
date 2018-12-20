@@ -7,8 +7,8 @@
     "serve-production": "vue-cli-service serve --mode=production",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "build-docker": "vue-cli-service build && docker build . -t kafka_manager",
-    "run-docker": "docker run -it -d -e PORT=9500 -p 9500:9500 kafka_manager node server.js"
+    "build-docker": "vue-cli-service build && docker build . -t jeffbeagley/kafka_manager",
+    "run-docker": "docker run -it -d -e PORT=9500 -p 9500:9500 kafka_manager"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.4.0",
