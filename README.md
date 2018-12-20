@@ -1,7 +1,7 @@
-# kafka_manager
+# Kafka Manager
 I was getting tired of running curl commands from a CLI for Kafka Connect configurations, so I decided to make a quick UI to handle the process for me. I welcome recommendations and pull requests for any added functionality.
 
-![alt text](https://s3.amazonaws.com/beagley-misc/Screenshot+from+2018-11-13+17-21-50.png)
+![alt text](https://s3.amazonaws.com/beagley-misc/Screenshot+from+2018-12-20+17-06-43.png)
 
 ### Current Todos
 - Add Information for each Task
