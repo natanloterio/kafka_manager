@@ -1,0 +1,45 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: kafka-manager
+  namespace: kafka
+  labels:
+    name: kafka-manager
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        name: kafka-manager
+    spec:
+      containers:
+      - image:  jeffbeagley/kafka_manager:latest
+        name:  kafka-manager
+        env:
+        - name: PORT
+          value: "9500"
+        - name: VUE_APP_CONNECT_SERVER
+          value: "http://connect.kafka.10.192.172.103.xip.io/"   
+        ports:
+        - containerPort:  9500
+          name: kafka-manager
+      restartPolicy: Always
+
+---
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: kafka-manager
+  namespace: kafka
+spec:
+  selector:
+    name: kafka-manager
+  ports:
+  - name: kafka-manager
+    port:  80
+    targetPort:  9500

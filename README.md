@@ -44,3 +44,10 @@ npm run build-docker
 ```
 docker run -it -d -e PORT=9500 -p 9500:9500 kafka_manager:latest node server.js
 ```
+
+## Run on Kubernetes
+#### In order to run on K8, you need to setup an ingress that the App can hit from outside of K8
+### Apply yaml file
+```
+kubectl apply -f k8.yaml
+```
