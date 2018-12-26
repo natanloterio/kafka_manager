@@ -57,3 +57,4 @@ kubectl apply -f k8.yaml
 PORT: nodejs port to run nodejs from
 VUE_APP_CONNECT_SERVER: hostname for Kafka Connect instance
 VUE_APP_REST_SERVER: hostname for Kafka REST Api
+VUE_APP_KSQL_SERVER: hostname for Kafka KSQL 
