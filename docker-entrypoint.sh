@@ -4,9 +4,11 @@ echo 'Setting environment variables... '
 
 VUE_APP_CONNECT_SERVER=$VUE_APP_CONNECT_SERVER
 VUE_APP_REST_SERVER=$VUE_APP_REST_SERVER
+VUE_APP_KSQL_SERVER=$VUE_APP_KSQL_SERVER
 
 echo 'VUE_APP_CONNECT_SERVER: ' $VUE_APP_CONNECT_SERVER
 echo 'VUE_APP_REST_SERVER: ' $VUE_APP_REST_SERVER
+echo 'VUE_APP_KSQL_SERVER: ' $VUE_APP_KSQL_SERVER
 
 if [ -f "$VUE_APP_CONNECT_SERVER" ]
 then 
@@ -16,6 +18,11 @@ fi
 if [ -f "$VUE_APP_REST_SERVER" ]
 then 
     echo "$VUE_APP_REST_SERVER" >> ".env.production"
+fi
+
+if [ -f "$VUE_APP_KSQL_SERVER" ]
+then 
+    echo "$VUE_APP_KSQL_SERVER" >> ".env.production"
 fi
 
 echo 'Building Kafka Manager...'
