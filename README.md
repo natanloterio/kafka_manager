@@ -51,3 +51,9 @@ docker run -it -d -e PORT=9500 -p 9500:9500 kafka_manager:latest node server.js
 ```
 kubectl apply -f k8.yaml
 ```
+
+## Environment Variables
+```
+PORT: nodejs port to run nodejs from
+VUE_APP_CONNECT_SERVER: hostname for Kafka Connect instance
+VUE_APP_REST_SERVER: hostname for Kafka REST Api
