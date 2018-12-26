@@ -19,7 +19,7 @@ then
 fi
 
 echo 'Building Kafka Manager...'
-npm run i
+npm i
 npm run build
 
 echo 'Starting Kafka Manager...'
