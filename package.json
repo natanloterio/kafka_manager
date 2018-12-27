@@ -8,7 +8,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "build-docker": "docker build . -t jeffbeagley/kafka_manager",
-    "run-docker": "docker run -it -d -e PORT=80 -e VUE_APP_CONNECT_SERVER=http://connect.kafka.10.192.172.103.xip.io -p 80:80 kafka_manager"
+    "run-docker": "docker run -it -d -e PORT=80 -e VUE_APP_CONNECT_SERVER=http://connect.kafka.10.192.172.103.xip.io -p 80:80 jeffbeagley/kafka_manager:latest"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.4.0",
