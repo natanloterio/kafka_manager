@@ -7,7 +7,7 @@
             <b-navbar-nav class="ml-auto">
                 <b-navbar-nav>
                     <b-nav-item to="/">Home</b-nav-item>
-                    <b-nav-item to="/topics">Topics</b-nav-item>
+                    <b-nav-item to="/manage">Manage</b-nav-item>
                     <b-nav-item to="/connectors">Connectors</b-nav-item>
                 </b-navbar-nav>
             </b-navbar-nav>
