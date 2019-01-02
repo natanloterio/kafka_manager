@@ -11,11 +11,10 @@
 
         <b-row v-if="server_connected">
             <div class="col-sm-4">
-                                <b-button-group>
-                                    <b-button variant="primary" @click='createTopic'>Create Topic</b-button>
-                                    <b-button variant="primary" @click='getStreams();getTopics()'>Refresh List</b-button>
-                                </b-button-group>
-                <item class="item" :model="data"></item>
+                <b-button variant="primary" @click='createTopic'>Create Topic</b-button>
+                <b-button variant="primary" @click='getStreams();getTopics()'>Refresh List</b-button>
+                <b-button variant="primary" @click='showSql'>SQL Editor</b-button>
+                <item class="item" :model="data" ></item>
             </div>
             <div class="col-sm-8" v-if="show_sql">
                 <b-row>
@@ -24,10 +23,10 @@
                             <b-form-group id="exampleInputGroup1"
                                             label-for="exampleInput1"
                                             >
-                                <b-button-group>
+
                                     <b-button variant="primary" v-on:click='executeQuery'>Execute Query</b-button>
                                     <b-button variant="primary" @click='clearResults'>Clear Results</b-button>
-                                </b-button-group>
+
                             </b-form-group>
                             <b-form-group id="exampleInputGroup1"
                                             label-for="exampleInput1"
@@ -107,6 +106,9 @@
                     </b-button-group>
                 </b-form>
             </div>
+            <div class="col-sm-8" v-if="show_topic_data">
+                show data
+            </div>
         </b-row>
     </b-container>
   </div>
@@ -120,7 +122,7 @@ import VueJsonPretty from 'vue-json-pretty'
 
 export default {
     components: {
-        'item': item,
+        item,
         VueJsonPretty
     },
     data () {
@@ -130,6 +132,7 @@ export default {
             server_connected: false,
             show_sql: true,
             show_create_topic: false,
+            show_topic_data: false,
             query_text: '',
             query_results: 'Enter a Query and hit Ctrl+Enter to Execute',
             data: {
@@ -163,6 +166,7 @@ export default {
     },
     methods: {
         async getTopics () {
+            let self = this
             this.data.children[0].children = []
 
             let u = this.$store.getters.getKsqlServer + '/ksql'
@@ -181,7 +185,7 @@ export default {
                 this.data.children[0].children.push({
                     'name': v.name,
                     'children': [
-                        { name: 'View Data' },
+                        { name: 'View Data', topic: v.name, getData: (topic) => { self.getTopicData(topic) } },
                         { name: 'Drop Topic' }
                     ]
                 })
@@ -266,6 +270,16 @@ export default {
         async cancelCreateTopic () {
             this.show_create_topic = false
             this.show_sql = true
+        },
+        async getTopicData (topic) {
+            this.show_create_topic = false
+            this.show_sql = false
+            this.show_topic_data = true
+        },
+        showSql () {
+            this.show_create_topic = false
+            this.show_sql = true
+            this.show_topic_data = false
         }
     },
     created: async function () {

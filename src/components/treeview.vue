@@ -1,6 +1,6 @@
 <template id="item-template">
   <li>
-    <div :class="{bold: isFolder}" @click="toggle">
+    <div :class="{bold: isFolder}" @click="toggle()">
         {{model.name}}
         <span v-if="isFolder">[{{ open ? '-' : '+' }}]</span>
     </div>
@@ -9,7 +9,8 @@
         class="item"
         v-for="(model, index) in model.children"
         :key="index"
-        :model="model">
+        :model="model"
+        >
       </item>
     </ul>
   </li>
@@ -40,13 +41,13 @@ export default {
     },
     data: function () {
         return {
-            open: false
+            open: false,
+            view: ''
         }
     },
     computed: {
         isFolder: function () {
-            return this.model.children &&
-        this.model.children.length
+            return this.model.children && this.model.children.length
         }
     },
     methods: {
@@ -54,6 +55,13 @@ export default {
             if(this.isFolder) {
                 this.open = !this.open
             }
+
+            if(this.model.name === 'View Data') {
+                this.model.getData(this.model.topic)
+            }
+        },
+        viewData () {
+            console.log('view data')
         }
     }
 }
