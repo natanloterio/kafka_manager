@@ -8,6 +8,7 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
     "build-docker": "docker build . -t jeffbeagley/kafka_manager",
+    "run-dev-api": "nodemon server.js",
     "run-docker": "docker run -it -d -e PORT=80 -e VUE_APP_CONNECT_SERVER=http://connect.kafka.10.192.172.103.xip.io -p 80:80 jeffbeagley/kafka_manager:latest"
   },
   "dependencies": {
@@ -16,8 +17,11 @@
     "@fortawesome/free-solid-svg-icons": "^5.4.0",
     "@fortawesome/vue-fontawesome": "^0.1.1",
     "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
     "bootstrap-vue": "^2.0.0-rc.11",
+    "cors": "^2.8.5",
     "kafka-node": "^3.0.1",
+    "nodemon": "^1.18.9",
     "register-service-worker": "^1.0.0",
     "vue": "^2.5.17",
     "vue-json-pretty": "^1.4.1",
