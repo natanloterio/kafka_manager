@@ -11,9 +11,13 @@
 
         <b-row v-if="server_connected">
             <div class="col-sm-4">
+                                <b-button-group>
+                                    <b-button variant="primary" @click='createTopic'>Create Topic</b-button>
+                                    <b-button variant="primary" @click='getStreams();getTopics()'>Refresh List</b-button>
+                                </b-button-group>
                 <item class="item" :model="data"></item>
             </div>
-            <div class="col-sm-8">
+            <div class="col-sm-8" v-if="show_sql">
                 <b-row>
                     <div class="col-sm-12">
                         <b-form>
@@ -22,7 +26,7 @@
                                             >
                                 <b-button-group>
                                     <b-button variant="primary" v-on:click='executeQuery'>Execute Query</b-button>
-                                    <b-button variant="primary" @click='getStreams();getTopics()'>Refresh List</b-button>
+                                    <b-button variant="primary" @click='clearResults'>Clear Results</b-button>
                                 </b-button-group>
                             </b-form-group>
                             <b-form-group id="exampleInputGroup1"
@@ -47,6 +51,62 @@
                     </div>
                 </b-row>
             </div>
+            <div class="col-sm-8" v-if="show_create_topic">
+    <b-alert variant="danger"
+             dismissible
+             :show="create_topic_form.show_error"
+             @dismissed="create_topic_form.show_error=false">
+      {{ create_topic_form.response }}
+    </b-alert>
+    <b-alert variant="success"
+             dismissible
+             :show="create_topic_form.show_success"
+             @dismissed="create_topic_form.show_success=false">
+      {{ create_topic_form.response }}
+    </b-alert>
+                <b-form >
+                    <b-form-group id="exampleInputGroup1"
+                                    label="Topic Name:"
+                                    label-for="exampleInput1"
+                                    description=" ">
+                        <b-form-input id="exampleInput1"
+                                    type="text"
+                                    required
+                                    v-model='create_topic_form.topic'
+                                    placeholder="Enter a name for your Topic">
+                        </b-form-input>
+                    </b-form-group>
+
+                    <b-form-group id="exampleInputGroup1"
+                                    label="Partitions:"
+                                    label-for="exampleInput1"
+                                    description=" ">
+                        <b-form-input id="exampleInput1"
+                                    type="number"
+                                    required
+                                    v-model="create_topic_form.partitions"
+                                    placeholder="1">
+                        </b-form-input>
+                    </b-form-group>
+
+                    <b-form-group id="exampleInputGroup1"
+                                    label="Replication Factor:"
+                                    label-for="exampleInput1"
+                                    description=" ">
+                        <b-form-input id="exampleInput1"
+                                    type="number"
+                                    required
+                                    v-model="create_topic_form.replicationFactor"
+                                    placeholder="1">
+                        </b-form-input>
+                    </b-form-group>
+
+                    <b-button-group>
+                        <b-button type="submit" variant="primary" @click='createTopicSubmit'>Create Topic</b-button>
+                        <b-button type="reset" variant="danger" @click='cancelCreateTopic'>Cancel</b-button>
+                    </b-button-group>
+                </b-form>
+            </div>
         </b-row>
     </b-container>
   </div>
@@ -68,8 +128,10 @@ export default {
             show: true,
             open: false,
             server_connected: false,
+            show_sql: true,
+            show_create_topic: false,
             query_text: '',
-            query_results: 'Results here',
+            query_results: 'Enter a Query and hit Ctrl+Enter to Execute',
             data: {
                 name: 'Kafka',
                 children: [
@@ -86,7 +148,16 @@ export default {
 
                 ]
 
-            }
+            },
+            create_topic_form: {
+                topic: '',
+                partitions: 1,
+                replicationFactor: 1,
+                show_error: false,
+                response: '',
+                show_success: false
+            },
+            kafkaClient: {}
 
         }
     },
@@ -108,7 +179,11 @@ export default {
 
             r.data[0].topics.forEach((v) => {
                 this.data.children[0].children.push({
-                    'name': v.name
+                    'name': v.name,
+                    'children': [
+                        { name: 'View Data' },
+                        { name: 'Drop Topic' }
+                    ]
                 })
             })
         },
@@ -140,15 +215,57 @@ export default {
 
             }
 
+            this.query_results = 'loading...'
+
             let r = await axios.post(u, d).catch((err) => { return err.response })
 
             this.query_results = r.data
         },
         async checkEnter (e) {
-            console.log(e)
-            if(e.keyCode === 13 && e.shiftKey) {
+            if(e.keyCode === 13 && e.ctrlKey) {
                 this.executeQuery()
             }
+        },
+        async clearResults () {
+            this.query_results = 'Enter a Query and hit Ctrl+Enter to Execute'
+        },
+        async createTopic () {
+            this.show_create_topic = true
+            this.show_sql = false
+        },
+        async createTopicSubmit () {
+            let a = this.$store.getters.getApiServer + '/topic'
+
+            this.create_topic_form.show_error = false
+            this.create_topic_form.show_success = false
+
+            let b = {
+                'topic': this.create_topic_form.topic,
+                'partitions': this.create_topic_form.partitions,
+                'replication': this.create_topic_form.replicationFactor
+            }
+
+            let r = await axios.post(a, b).catch((err) => { return err.response })
+
+            if(r.data.length > 0) {
+                this.create_topic_form.show_error = true
+
+                this.create_topic_form.response = r.data[0].error
+
+                return false
+            }
+
+            this.getTopics()
+            this.getStreams()
+
+            this.create_topic_form.show_success = true
+            this.create_topic_form.response = `${this.create_topic_form.topic} created successfully`
+
+            return true
+        },
+        async cancelCreateTopic () {
+            this.show_create_topic = false
+            this.show_sql = true
         }
     },
     created: async function () {

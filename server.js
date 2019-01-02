@@ -14,7 +14,7 @@ client.on('error', function (err) {
 })
 
 client.once('connect', function () {
-    console.log('connected')
+    console.log('connected to kafka host')
     client.loadMetadataForTopics([], function (error, results) {
         if(error) {
             return console.error(error)
