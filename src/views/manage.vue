@@ -10,22 +10,31 @@
         </div>
 
         <b-row v-if="server_connected">
-            <div class="col-sm-4">
-                <b-button variant="primary" @click='createTopic'>Create Topic</b-button>
-                <b-button variant="primary" @click='getStreams();getTopics()'>Refresh List</b-button>
-                <b-button variant="primary" @click='showSql'>SQL Editor</b-button>
+            <div class="col-sm-12 col-md-6 col-lg-4">
+                <b-button-toolbar key-nav  aria-label="Toolbar with button groups">
+                    <b-button-group class="mx-1">
+                        <b-btn variant="primary" @click='createTopic'><font-awesome-icon icon="folder-plus" /> Create Topic</b-btn>
+                        <b-btn variant="primary" @click='getStreams();getTopics()'><font-awesome-icon icon="sync" /> Refresh List</b-btn>
+                        <b-btn variant="primary" @click='showSql'>SQL Editor</b-btn>
+                    </b-button-group>
+                </b-button-toolbar>
                 <item class="item" :model="data" ></item>
             </div>
-            <div class="col-sm-8" v-if="show_sql">
+            <div class="col-sm-12 col-md-6 col-lg-8" v-if="show_sql">
                 <b-row>
                     <div class="col-sm-12">
+                        <div>
+                            <b-button-toolbar key-nav  aria-label="Toolbar with button groups">
+                                <b-button-group class="mx-1">
+                                    <b-btn variant="primary" v-on:click='executeQuery'>Execute Query</b-btn>
+                                    <b-btn variant="primary" @click='clearResults'>Clear Results</b-btn>
+                                </b-button-group>
+                            </b-button-toolbar>
+                        </div>
                         <b-form>
                             <b-form-group id="exampleInputGroup1"
                                             label-for="exampleInput1"
                                             >
-
-                                    <b-button variant="primary" v-on:click='executeQuery'>Execute Query</b-button>
-                                    <b-button variant="primary" @click='clearResults'>Clear Results</b-button>
 
                             </b-form-group>
                             <b-form-group id="exampleInputGroup1"
