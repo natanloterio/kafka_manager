@@ -144,7 +144,7 @@ export default {
     },
     data () {
         return {
-            socket: io('localhost:8081'),
+            socket: null,
             show: true,
             open: false,
             server_connected: false,
@@ -334,11 +334,13 @@ export default {
     },
     created: async function () {
         let k = this.$store.getters.getKsqlServer
+        let a = this.$store.getters.getApiServer
 
         let s = new Servers()
 
         s.ksql_server = k
 
+        this.socket = io(a)
         if(await s.checkKSQLServer()) {
             this.server_connected = true
 
