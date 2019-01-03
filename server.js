@@ -50,6 +50,10 @@ io.on('connection', function (socket) {
 
         consumer.on('message', function (message) {
             socket.emit(`topicdata-data-${socket.id}`, message)
+
+            if(message.offset >= 1000) {
+                consumer.close()
+            }
         })
     })
 })
