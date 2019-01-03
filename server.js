@@ -6,6 +6,8 @@ const bodyParser = require('body-parser')
 const dist = path.join(__dirname, 'dist')
 const kafkaHost = process.env.KAFKA_SERVERS || '10.192.172.105:32400'
 const cors = require('cors')
+const http = require('http').Server(app)
+const io = require('socket.io')(http)
 
 const client = new kafka.KafkaClient({ kafkaHost: kafkaHost })
 
@@ -25,6 +27,32 @@ client.once('connect', function () {
 app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+
+io.on('connection', function (socket) {
+    socket.on(`topicdata-view-${socket.id}`, function (opt) {
+        let t = opt
+
+        let payloads = [
+            {
+                topic: t,
+                offset: 0
+            }
+        ]
+
+        let options = {
+            autoCommit: true,
+            fromOffset: true,
+            offset: 0
+        }
+
+        let client = new kafka.KafkaClient({ kafkaHost: kafkaHost, idleConnection: '1000' })
+        let consumer = new kafka.Consumer(client, payloads, options)
+
+        consumer.on('message', function (message) {
+            socket.emit(`topicdata-data-${socket.id}`, message)
+        })
+    })
+})
 
 app.get('/', function (req, res) {
     res.sendFile(path.join(dist, 'index.html'))
@@ -85,41 +113,10 @@ app.get('/topic', function (req, res) {
     })
 })
 
-app.get('/topicdata/:topic', function (req, res) {
-    let t = req.params.topic
-
-    res.setHeader('Content-Type', 'application/json')
-
-    let payloads = [
-        {
-            topic: t,
-            offset: 0
-        }
-    ]
-
-    let options = {
-        autoCommit: true,
-        fromOffset: true,
-        offset: 0
-    }
-
-    let consumer = new kafka.Consumer(client, payloads, options)
-
-    let d = []
-
-    consumer.on('message', function (message) {
-        d.push(message)
-    })
-
-    setTimeout(function () {
-        res.json(d)
-    }, 5000)
-})
-
 app.use('/', express.static(dist))
 
 const port = process.env.PORT || 8081
 
-app.listen(port, function () {
+http.listen(port, function () {
     console.log('Kafka Manager started and is accessible via http://localhost:%s', port)
 })

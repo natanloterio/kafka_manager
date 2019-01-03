@@ -117,9 +117,9 @@
             </div>
             <div class="col-sm-8" v-if="show_topic_data">
                     <div class="col-sm-12">
-                        <h5>Results</h5>
+                        <h5>{{ topic_data_name }}</h5>
                         <vue-json-pretty
-                            :data=query_results
+                            :data=topic_data
                         >
                         </vue-json-pretty>
                     </div>
@@ -134,6 +134,8 @@ import { Servers } from '../modules/check_server_connection'
 import axios from 'axios'
 import item from '../components/treeview'
 import VueJsonPretty from 'vue-json-pretty'
+import { setTimeout } from 'timers'
+import io from 'socket.io-client'
 
 export default {
     components: {
@@ -142,6 +144,7 @@ export default {
     },
     data () {
         return {
+            socket: io('localhost:8081'),
             show: true,
             open: false,
             server_connected: false,
@@ -150,6 +153,8 @@ export default {
             show_topic_data: false,
             query_text: '',
             query_results: 'Enter a Query and hit Ctrl+Enter to Execute',
+            topic_data: [],
+            topic_data_name: 'Results for',
             data: {
                 name: 'Kafka',
                 children: [
@@ -195,8 +200,7 @@ export default {
                 this.data.children[0].children.push({
                     'name': v,
                     'children': [
-                        { name: 'View Data', topic: v, getData: (v) => { self.getTopicData(v) } },
-                        { name: 'Drop Topic' }
+                        { name: 'View Data', topic: v, getData: (v) => { self.getTopicData(v) } }
                     ]
                 })
             })
@@ -306,12 +310,21 @@ export default {
             this.show_sql = false
             this.show_topic_data = true
 
-            let a = this.$store.getters.getApiServer + '/topicdata/' + topic
+            this.topic_data = []
             this.query_results = 'loading...'
+            this.topic_data_name = 'Results for Topic ' + topic
 
-            let r = await axios.get(a, { 'responseType': 'stream' }).catch((err) => { return err.response })
+            this.socket.emit(`topicdata-view-${this.socket.id}`, topic)
 
-            this.query_results = r.data
+            this.socket.off(`topicdata-data-${this.socket.id}`)
+            this.socket.on(`topicdata-data-${this.socket.id}`, (data) => {
+                // check to see if topic_data houses 1000 records, if so, kill this request
+                if(this.topic_data.length >= 1000) {
+                    this.socket.off(`topicdata-data-${this.socket.id}`)
+                }
+
+                this.topic_data.push(data)
+            })
         },
         showSql () {
             this.show_create_topic = false
