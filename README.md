@@ -3,12 +3,15 @@ I was getting tired of running curl commands from a CLI for Kafka Connect config
 
 ![alt text](https://s3.amazonaws.com/beagley-misc/Screenshot+from+2018-12-20+17-06-43.png)
 
+### Current Functionality
+- View, and Create Topics
+- View, Create, Delete Kafka Connectors
+- View, Create, Manage, and Execute KSQL
+
 ### Current Todos
-- Add Information for each Task
 - Return Server Status
 - Allow Pause/Resume of individual Tasks
-- Add Topic administration via Kafka REST api
-- Display connector capabilities, and configuration
+- Allow Topic Deletion
 
 ## Project setup
 ```
