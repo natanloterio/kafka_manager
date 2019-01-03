@@ -13,9 +13,9 @@
             <div class="col-sm-12 col-md-6 col-lg-4">
                 <b-button-toolbar key-nav  aria-label="Toolbar with button groups">
                     <b-button-group class="mx-1">
-                        <b-btn variant="primary" @click='createTopic'><font-awesome-icon icon="folder-plus" /> Create Topic</b-btn>
-                        <b-btn variant="primary" @click='getStreams();getTopics()'><font-awesome-icon icon="sync" /> Refresh List</b-btn>
-                        <b-btn variant="primary" @click='showSql'>SQL Editor</b-btn>
+                        <b-btn variant="primary" @click='createTopic' size="sm"><font-awesome-icon icon="folder-plus" /> Create Topic</b-btn>
+                        <b-btn variant="primary" @click='getStreams();getTopics()' size="sm"><font-awesome-icon icon="sync" /> Refresh List</b-btn>
+                        <b-btn variant="primary" @click='showSql' size="sm">SQL Editor</b-btn>
                     </b-button-group>
                 </b-button-toolbar>
                 <item class="item" :model="data" ></item>
@@ -26,8 +26,8 @@
                         <div>
                             <b-button-toolbar key-nav  aria-label="Toolbar with button groups">
                                 <b-button-group class="mx-1">
-                                    <b-btn variant="primary" v-on:click='executeQuery'>Execute Query</b-btn>
-                                    <b-btn variant="primary" @click='clearResults'>Clear Results</b-btn>
+                                    <b-btn variant="primary" v-on:click='executeQuery' size="sm">Execute Query</b-btn>
+                                    <b-btn variant="primary" @click='clearResults' size="sm">Clear Results</b-btn>
                                 </b-button-group>
                             </b-button-toolbar>
                         </div>
@@ -110,8 +110,8 @@
                     </b-form-group>
 
                     <b-button-group>
-                        <b-button type="submit" variant="primary" @click='createTopicSubmit'>Create Topic</b-button>
-                        <b-button type="reset" variant="danger" @click='cancelCreateTopic'>Cancel</b-button>
+                        <b-button type="submit" variant="primary" @click='createTopicSubmit' size="sm">Create Topic</b-button>
+                        <b-button type="reset" variant="danger" @click='cancelCreateTopic' size="sm">Cancel</b-button>
                     </b-button-group>
                 </b-form>
             </div>

@@ -18,7 +18,7 @@
                                 <b-list-group-item button v-for="c in connectors" v-bind:key=c.id>
                                     {{c.name}}
                                     <b-button-group class="float-right">
-                                        <b-button type="reset" @click.stop="viewConnector(c.name)">Info</b-button>
+                                        <b-button size="sm" type="reset" @click.stop="viewConnector(c.name)">Info</b-button>
                                         <b-button size="sm" variant="danger" @click.stop="deleteConnector(c.name)" class="mr-1">
                                             Delete
                                         </b-button>
@@ -34,7 +34,7 @@
                                 <b-list-group-item button v-for="s in sinks" v-bind:key=s.id>
                                     {{s.name}}
                                     <b-button-group class="float-right">
-                                        <b-button type="reset" @click.stop="viewConnector(s.name)">Info</b-button>
+                                        <b-button size="sm" type="reset" @click.stop="viewConnector(s.name)">Info</b-button>
                                         <b-button size="sm" variant="danger" @click.stop="deleteConnector(c.name)" class="mr-1">
                                             Delete
                                         </b-button>
@@ -62,8 +62,8 @@
                         </b-form-textarea>
                     </b-form-group>
                     <b-button-group>
-                        <b-button type="submit" variant="primary">Add Connector</b-button>
-                        <b-button type="reset" variant="danger">Clear</b-button>
+                        <b-button type="submit" variant="primary" size="sm">Add Connector</b-button>
+                        <b-button type="reset" variant="danger" size="sm">Clear</b-button>
                     </b-button-group>
                 </b-form>
             </div>
