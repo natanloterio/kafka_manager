@@ -35,7 +35,7 @@
                                     {{s.name}}
                                     <b-button-group class="float-right">
                                         <b-button size="sm" type="reset" @click.stop="viewConnector(s.name)">Info</b-button>
-                                        <b-button size="sm" variant="danger" @click.stop="deleteConnector(c.name)" class="mr-1">
+                                        <b-button size="sm" variant="danger" @click.stop="deleteConnector(s.name)" class="mr-1">
                                             Delete
                                         </b-button>
 
