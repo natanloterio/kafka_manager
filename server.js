@@ -67,6 +67,24 @@ app.post('/topic', function (req, res) {
     })
 })
 
+app.get('/topic', function (req, res) {
+    client.loadMetadataForTopics([], function (error, results) {
+        if(error) {
+            return res.send(error)
+        }
+
+        let ts = []
+
+        for(let t in results[1].metadata) {
+            ts.push(t)
+        }
+
+        ts.sort()
+
+        return res.send(ts)
+    })
+})
+
 app.use('/', express.static(dist))
 
 const port = process.env.PORT || 8081
