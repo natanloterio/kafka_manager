@@ -85,6 +85,37 @@ app.get('/topic', function (req, res) {
     })
 })
 
+app.get('/topicdata/:topic', function (req, res) {
+    let t = req.params.topic
+
+    res.setHeader('Content-Type', 'application/json')
+
+    let payloads = [
+        {
+            topic: t,
+            offset: 0
+        }
+    ]
+
+    let options = {
+        autoCommit: true,
+        fromOffset: true,
+        offset: 0
+    }
+
+    let consumer = new kafka.Consumer(client, payloads, options)
+
+    let d = []
+
+    consumer.on('message', function (message) {
+        d.push(message)
+    })
+
+    setTimeout(function () {
+        res.json(d)
+    }, 5000)
+})
+
 app.use('/', express.static(dist))
 
 const port = process.env.PORT || 8081

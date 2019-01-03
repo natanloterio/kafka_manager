@@ -21,6 +21,7 @@
 .item {
   cursor: pointer;
   margin-left: 5px;
+  font-size: 14px;
 }
 .bold {
   font-weight: bold;

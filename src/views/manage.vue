@@ -26,7 +26,7 @@
                         <div>
                             <b-button-toolbar key-nav  aria-label="Toolbar with button groups">
                                 <b-button-group class="mx-1">
-                                    <b-btn variant="primary" v-on:click='executeQuery' size="sm">Execute Query</b-btn>
+                                    <b-btn variant="primary" v-on:click='executeksql' size="sm">Execute Query</b-btn>
                                     <b-btn variant="primary" @click='clearResults' size="sm">Clear Results</b-btn>
                                 </b-button-group>
                             </b-button-toolbar>
@@ -116,7 +116,13 @@
                 </b-form>
             </div>
             <div class="col-sm-8" v-if="show_topic_data">
-                show data
+                    <div class="col-sm-12">
+                        <h5>Results</h5>
+                        <vue-json-pretty
+                            :data=query_results
+                        >
+                        </vue-json-pretty>
+                    </div>
             </div>
         </b-row>
     </b-container>
@@ -216,7 +222,7 @@ export default {
                 })
             })
         },
-        async executeQuery () {
+        async executeksql () {
             let u = this.$store.getters.getKsqlServer + '/ksql'
             let d = {
                 'ksql': this.query_text
@@ -227,11 +233,31 @@ export default {
 
             let r = await axios.post(u, d).catch((err) => { return err.response })
 
+            // check if it requires /query endpoint as a fallback
+            if(r.data.error_code === 40002) {
+                this.query_results = await this.executeQuery()
+                return
+            }
+
             this.query_results = r.data
+        },
+        async executeQuery () {
+            let u = this.$store.getters.getKsqlServer + '/query'
+            let d = {
+                'ksql': this.query_text
+
+            }
+
+            this.query_results = 'loading...'
+
+            let r = await axios.post(u, d).catch((err) => { return err.response })
+
+            // check if it requires /query endpoint as a fallback
+            return r.data
         },
         async checkEnter (e) {
             if(e.keyCode === 13 && e.ctrlKey) {
-                this.executeQuery()
+                this.executeksql()
             }
         },
         async clearResults () {
@@ -279,6 +305,13 @@ export default {
             this.show_create_topic = false
             this.show_sql = false
             this.show_topic_data = true
+
+            let a = this.$store.getters.getApiServer + '/topicdata/' + topic
+            this.query_results = 'loading...'
+
+            let r = await axios.get(a, { 'responseType': 'stream' }).catch((err) => { return err.response })
+
+            this.query_results = r.data
         },
         showSql () {
             this.show_create_topic = false
