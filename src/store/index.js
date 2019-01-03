@@ -12,7 +12,7 @@ if(process.env.NODE_ENV === 'production') {
     connectServer = process.env.VUE_APP_CONNECT_SERVER
     restServer = process.env.VUE_APP_REST_SERVER
     ksqlServer = process.env.VUE_APP_KSQL_SERVER
-    apiServer = 'http://localhost'
+    apiServer = ''
 }
 
 // fix urls with trailing slashes
