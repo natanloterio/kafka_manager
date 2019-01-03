@@ -169,23 +169,18 @@ export default {
             let self = this
             this.data.children[0].children = []
 
-            let u = this.$store.getters.getKsqlServer + '/ksql'
-            let d = {
-                'ksql': 'show topics;'
-
-            }
-
-            let r = await axios.post(u, d)
+            let a = this.$store.getters.getApiServer + '/topic'
+            let r = await axios.get(a)
 
             if(r.status !== 200) {
                 return false
             }
 
-            r.data[0].topics.forEach((v) => {
+            r.data.forEach((v) => {
                 this.data.children[0].children.push({
-                    'name': v.name,
+                    'name': v,
                     'children': [
-                        { name: 'View Data', topic: v.name, getData: (topic) => { self.getTopicData(topic) } },
+                        { name: 'View Data', topic: v, getData: (v) => { self.getTopicData(v) } },
                         { name: 'Drop Topic' }
                     ]
                 })
