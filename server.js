@@ -28,36 +28,6 @@ app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
-io.on('connection', function (socket) {
-    socket.on(`topicdata-view-${socket.id}`, function (opt) {
-        let t = opt
-
-        let payloads = [
-            {
-                topic: t,
-                offset: 0
-            }
-        ]
-
-        let options = {
-            autoCommit: true,
-            fromOffset: true,
-            offset: 0
-        }
-
-        let client = new kafka.KafkaClient({ kafkaHost: kafkaHost, idleConnection: '1000' })
-        let consumer = new kafka.Consumer(client, payloads, options)
-
-        consumer.on('message', function (message) {
-            socket.emit(`topicdata-data-${socket.id}`, message)
-
-            if(message.offset >= 1000) {
-                consumer.close()
-            }
-        })
-    })
-})
-
 app.get('/', function (req, res) {
     res.sendFile(path.join(dist, 'index.html'))
 })
@@ -117,6 +87,41 @@ app.get('/topic', function (req, res) {
     })
 })
 
+app.get('/topic/offsets/:topic', function (req, res) {
+    let t = req.params.topic
+
+    let payloads = [
+        {
+            topic: t,
+            offset: 0
+        }
+    ]
+
+    let options = {
+        autoCommit: true,
+        fromOffset: true,
+        offset: 0
+    }
+
+    let client = new kafka.KafkaClient({ kafkaHost: kafkaHost, idleConnection: '1000' })
+    let offset = new kafka.Offset(client)
+
+    offset.fetchLatestOffsets([t], function (err, offsets) {
+        if(err) {
+            console.log(err)
+        }
+
+        // current offset from topic
+        let o = offsets[t]
+
+        res.json(o)
+    })
+})
+
+app.get('/topicdata/:topic', function (req, res) {
+
+})
+
 app.use('/', express.static(dist))
 
 const port = process.env.PORT || 8081
@@ -124,3 +129,5 @@ const port = process.env.PORT || 8081
 http.listen(port, function () {
     console.log('Kafka Manager started and is accessible via http://localhost:%s', port)
 })
+
+process.on('SIGINT', () => { console.log('Bye bye!'); process.exit() })
