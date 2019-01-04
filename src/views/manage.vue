@@ -118,6 +118,12 @@
             <div class="col-sm-8" v-if="show_topic_data">
                     <div class="col-sm-12">
                         <h5>{{ topic_data_name }}</h5>
+                        <h6>Offsets</h6>
+                        <vue-json-pretty
+                            :data=topic_offset
+                        >
+                        </vue-json-pretty>
+                        <h6>Data</h6>
                         <vue-json-pretty
                             :data=topic_data
                         >
@@ -155,6 +161,7 @@ export default {
             query_results: 'Enter a Query and hit Ctrl+Enter to Execute',
             topic_data: [],
             topic_data_name: 'Results for',
+            topic_offset: 0,
             data: {
                 name: 'Kafka',
                 children: [
@@ -314,17 +321,12 @@ export default {
             this.query_results = 'loading...'
             this.topic_data_name = 'Results for Topic ' + topic
 
-            this.socket.emit(`topicdata-view-${this.socket.id}`, topic)
+            // get offets
+            let a = this.$store.getters.getApiServer + '/topic/offsets/' + topic
 
-            this.socket.off(`topicdata-data-${this.socket.id}`)
-            this.socket.on(`topicdata-data-${this.socket.id}`, (data) => {
-                // check to see if topic_data houses 1000 records, if so, kill this request
-                if(this.topic_data.length >= 1000) {
-                    this.socket.off(`topicdata-data-${this.socket.id}`)
-                }
+            let r = await axios.get(a).catch((err) => { return err.response })
 
-                this.topic_data.push(data)
-            })
+            this.topic_offset = r.data
         },
         showSql () {
             this.show_create_topic = false
