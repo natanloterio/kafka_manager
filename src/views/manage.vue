@@ -332,6 +332,8 @@ export default {
             this.show_create_topic = false
             this.show_sql = true
             this.show_topic_data = false
+
+            this.query_results = 'Enter a Query and hit Ctrl+Enter to Execute'
         }
     },
     created: async function () {
