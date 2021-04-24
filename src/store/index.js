@@ -8,12 +8,12 @@ let ksqlServer = 'http://ksql-server.kafka.10.192.172.103.xip.io/'
 let restServer = 'http://localhost:8084'
 let apiServer = 'http://localhost:8081'
 
-if(process.env.NODE_ENV === 'production') {
+//if(process.env.NODE_ENV === 'production') {
     connectServer = process.env.VUE_APP_CONNECT_SERVER
     restServer = process.env.VUE_APP_REST_SERVER
     ksqlServer = process.env.VUE_APP_KSQL_SERVER
     apiServer = ''
-}
+//}
 
 // fix urls with trailing slashes
 if(typeof connectServer !== 'undefined') { connectServer = connectServer.replace(/\/+$/, '') }
