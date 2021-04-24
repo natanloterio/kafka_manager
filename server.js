@@ -5,7 +5,7 @@ const kafka = require('kafka-node')
 const bodyParser = require('body-parser')
 const dist = path.join(__dirname, 'dist')
 
-const kafkaHost = process.env.KAFKA_SERVERS || '192.168.100.10:8083'
+const kafkaHost = process.env.KAFKA_SERVERS || '192.168.100.10:8084'
 const cors = require('cors')
 const http = require('http').Server(app)
 const io = require('socket.io')(http)
